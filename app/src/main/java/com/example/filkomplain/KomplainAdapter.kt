@@ -66,7 +66,6 @@ class KomplainAdapter(
             hideButtons(holder)
         }
 
-        // Long Click
         holder.itemView.setOnLongClickListener {
             if (!isAnyItemSelected) {
                 isAnyItemSelected = true
