@@ -1,6 +1,5 @@
 package com.example.filkomplain
 
-import SpaceItemDecoration
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
@@ -95,7 +94,9 @@ class MainActivity : AppCompatActivity() {
 
             // Setup RecyclerView
             rvKomplain.layoutManager = LinearLayoutManager(this)
-            komplainAdapter = KomplainAdapter(listKomplain)
+            komplainAdapter = KomplainAdapter(listKomplain) { komplain ->
+                deleteKomplain(komplain)
+            }
             rvKomplain.adapter = komplainAdapter
 
             // Load data
@@ -108,7 +109,6 @@ class MainActivity : AppCompatActivity() {
 
         val spacingInDp = 16
         rvKomplain.addItemDecoration(SpaceItemDecoration(spacingInDp))
-
 
         btnShowProfile.setOnClickListener {
             startActivity(Intent(this, ProfileShowActivity::class.java))
@@ -133,6 +133,7 @@ class MainActivity : AppCompatActivity() {
                 Log.d("MainActivity", "Jumlah komplain ditemukan: ${result.size()}")
                 for (document in result) {
                     val komplain = document.toObject(KomplainModel::class.java)
+                    komplain.id = document.id
                     listKomplain.add(komplain)
                 }
                 komplainAdapter.notifyDataSetChanged()
@@ -155,4 +156,23 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
+    private fun deleteKomplain(komplain: KomplainModel) {
+        db.collection("komplain").document(komplain.id)
+            .delete()
+            .addOnSuccessListener {
+                komplainAdapter.removeItem(komplain)
+
+                Toast.makeText(this, "Laporanmu berhasil dihapus!", Toast.LENGTH_SHORT).show()
+
+                if (komplainAdapter.itemCount == 0) {
+                    rvKomplain.visibility = View.GONE
+                    bgMainEmpty.visibility = View.VISIBLE
+                    textKosong1.visibility = View.VISIBLE
+                    textKosong2.visibility = View.VISIBLE
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Gagal menghapus laporan", Toast.LENGTH_SHORT).show()
+            }
+    }
 }

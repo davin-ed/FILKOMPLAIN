@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white">
@@ -9,7 +8,7 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/bgItemKomplain"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="270dp"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -21,7 +20,7 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/phItemKomplain"
             android:layout_width="0dp"
-            android:layout_height="153dp"
+            android:layout_height="170dp"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="12dp"
@@ -32,6 +31,63 @@
             app:layout_constraintTop_toTopOf="@+id/bgItemKomplain"
             app:shapeAppearanceOverlay="@style/RoundedPhoto"
             app:srcCompat="@drawable/ph_img_komplain" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/overlaySelected"
+            android:layout_width="0dp"
+            android:layout_height="270dp"
+            android:background="#20000000"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/bgItemKomplain"
+            app:layout_constraintTop_toTopOf="@+id/bgItemKomplain"
+            app:layout_constraintEnd_toEndOf="@+id/bgItemKomplain"
+            app:shapeAppearanceOverlay="@style/RoundedImageView"
+            app:layout_constraintBottom_toBottomOf="@+id/bgItemKomplain"/>
+
+        <FrameLayout
+            android:id="@+id/functionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="@+id/phItemKomplain"
+            app:layout_constraintTop_toTopOf="@+id/phItemKomplain">
+
+                <ImageView
+                    android:id="@+id/bgTwoBtnKomplain"
+                    android:layout_width="102dp"
+                    android:layout_height="56dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/bg_twobtn_komplain" />
+
+                <LinearLayout
+                    android:id="@+id/btnDloadDelKomplain"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btnDelKomplain"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginVertical="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:stateListAnimator="@null"
+                            android:background="@drawable/bg_btn_del_komplain_ripple" />
+
+                        <Button
+                            android:id="@+id/btnDloadKomplain"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginVertical="8dp"
+                            android:layout_marginLeft="6dp"
+                            android:stateListAnimator="@null"
+                            android:background="@drawable/bg_btn_dload_komplain_ripple" />
+                </LinearLayout>
+        </FrameLayout>
+
 
         <TextView
             android:id="@+id/titleItemKomplain"

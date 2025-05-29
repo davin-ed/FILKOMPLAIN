@@ -11,6 +11,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -18,8 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.example.filkomplain.api.ApiService
-import com.example.filkomplain.api.RetrofitClient
+import androidx.core.widget.addTextChangedListener
 import com.example.filkomplain.model.KomplainModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -46,6 +46,11 @@ class KomplainActivity : AppCompatActivity() {
     private lateinit var editLokasi: EditText
     private lateinit var editKontak: EditText
 
+    private lateinit var iconJudul: ImageView
+    private lateinit var iconDescKomplain: ImageView
+    private lateinit var iconLokasi: ImageView
+    private lateinit var iconKontak: ImageView
+
     private lateinit var btnBuatKomplain: Button
 
     private lateinit var imagePickerLauncher: ActivityResultLauncher<String>
@@ -60,7 +65,6 @@ class KomplainActivity : AppCompatActivity() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.white)
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
 
-        // Bind views
         btnUpFotoKomplain = findViewById(R.id.btnUpFotoKomplain)
         btnBuatKomplain = findViewById(R.id.btnBuatKomplain)
         textUpFoto = findViewById(R.id.textUpFoto)
@@ -69,6 +73,11 @@ class KomplainActivity : AppCompatActivity() {
         editDescKomplain = findViewById(R.id.editDescKomplain)
         editLokasi = findViewById(R.id.editLokasi)
         editKontak = findViewById(R.id.editKontak)
+
+        iconJudul = findViewById(R.id.iconJudul)
+        iconDescKomplain = findViewById(R.id.iconDescKomplain)
+        iconLokasi = findViewById(R.id.iconLokasi)
+        iconKontak = findViewById(R.id.iconKontak)
 
         imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
@@ -97,6 +106,50 @@ class KomplainActivity : AppCompatActivity() {
         editDescKomplain.addTextChangedListener(textWatcher)
         editLokasi.addTextChangedListener(textWatcher)
         editKontak.addTextChangedListener(textWatcher)
+
+        editJudul.addTextChangedListener {
+            if (!it.isNullOrEmpty()) {
+                editJudul.setBackgroundResource(R.drawable.bg_form_input_filled)
+                editJudul.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                iconJudul.setColorFilter(ContextCompat.getColor(this, R.color.blue))
+            } else {
+                editJudul.setBackgroundResource(R.drawable.bg_form_input)
+                iconJudul.colorFilter = null
+            }
+        }
+
+        editDescKomplain.addTextChangedListener {
+            if (!it.isNullOrEmpty()) {
+                editDescKomplain.setBackgroundResource(R.drawable.bg_form_input_filled)
+                editDescKomplain.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                iconDescKomplain.setColorFilter(ContextCompat.getColor(this, R.color.blue))
+            } else {
+                editDescKomplain.setBackgroundResource(R.drawable.bg_form_input)
+                iconDescKomplain.colorFilter = null
+            }
+        }
+
+        editLokasi.addTextChangedListener {
+            if (!it.isNullOrEmpty()) {
+                editLokasi.setBackgroundResource(R.drawable.bg_form_input_filled)
+                editLokasi.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                iconLokasi.setColorFilter(ContextCompat.getColor(this, R.color.blue))
+            } else {
+                editLokasi.setBackgroundResource(R.drawable.bg_form_input)
+                iconLokasi.colorFilter = null
+            }
+        }
+
+        editKontak.addTextChangedListener {
+            if (!it.isNullOrEmpty()) {
+                editKontak.setBackgroundResource(R.drawable.bg_form_input_filled)
+                editKontak.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                iconKontak.setColorFilter(ContextCompat.getColor(this, R.color.blue))
+            } else {
+                editKontak.setBackgroundResource(R.drawable.bg_form_input)
+                iconKontak.colorFilter = null
+            }
+        }
 
         btnBuatKomplain.setOnClickListener {
             saveData()
@@ -150,7 +203,6 @@ class KomplainActivity : AppCompatActivity() {
                 callback(true) // Success
             }
             .addOnFailureListener { exception ->
-                Log.w("Komplain2Activity", "Error saving document", exception)
                 callback(false) // Fail
             }
     }
@@ -230,7 +282,6 @@ class KomplainActivity : AppCompatActivity() {
         }
         return tempFile
     }
-
 
     @SuppressLint("MissingSuperCall")
     override fun onBackPressed() {

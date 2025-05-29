@@ -1,4 +1,4 @@
-package com.example.filkomplain.api
+package com.example.filkomplain
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -6,8 +6,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "https://313c-66-96-225-80.ngrok-free.app/" // Ganti sesuai IP Server
-    private const val UPLOADS_PATH = "uploads/"
+    private const val BASE_URL = "https://7d16-103-47-133-99.ngrok-free.app/" // Ganti sesuai IP generated ngrok
+    // private const val BASE_URL = "http://10.0.2.2/" // Kalau pakai local
+    private const val UPLOADS_PATH = "FILKOMPLAIN/"
 
     fun getUploadsUrl(): String {
         return BASE_URL + UPLOADS_PATH

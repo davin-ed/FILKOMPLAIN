@@ -11,6 +11,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.widget.addTextChangedListener
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,6 +27,12 @@ class ProfileEditActivity : AppCompatActivity() {
     private lateinit var editProdiProfil: EditText
     private lateinit var editEmailProfil: EditText
     private lateinit var editPhoneProfil: EditText
+
+    private lateinit var iconName: ImageView
+    private lateinit var iconNIM: ImageView
+    private lateinit var iconProdi: ImageView
+    private lateinit var iconEmail: ImageView
+    private lateinit var iconPhone: ImageView
 
     private lateinit var btnSelesaiEditProfil: Button
 
@@ -55,9 +62,15 @@ class ProfileEditActivity : AppCompatActivity() {
         editEmailProfil = findViewById(R.id.editEmailProfil)
         editPhoneProfil = findViewById(R.id.editPhoneProfil)
 
+        iconName = findViewById(R.id.iconName)
+        iconNIM = findViewById(R.id.iconNIM)
+        iconProdi = findViewById(R.id.iconProdi)
+        iconEmail = findViewById(R.id.iconEmail)
+        iconPhone = findViewById(R.id.iconPhone)
+
         btnSelesaiEditProfil = findViewById(R.id.btnSelesaiEditProfil)
 
-        // Tangkap intent extra untuk cek apakah dari login Google
+        // Cek login dari Google
         isFromGoogleLogin = intent.getBooleanExtra("fromGoogleLogin", false)
 
         loadUserProfile()
@@ -75,6 +88,87 @@ class ProfileEditActivity : AppCompatActivity() {
         editNamaProfil.addTextChangedListener(textWatcher)
         editNIMProfil.addTextChangedListener(textWatcher)
         editPhoneProfil.addTextChangedListener(textWatcher)
+
+        editNIMProfil.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val nim = s.toString()
+                if (nim.length >= 8) {
+                    val kodeProdi = nim.substring(6, 8)
+
+                    val namaProdi = when (kodeProdi) {
+                        "20" -> "Teknik Informatika"
+                        "30" -> "Teknik Komputer"
+                        "40" -> "Sistem Informasi"
+                        "60" -> "Pendidikan Teknologi Informasi"
+                        "70" -> "Teknologi Informasi"
+                        else -> "Program Studi Tidak Dikenal"
+                    }
+
+                    editProdiProfil.setText(namaProdi)
+                } else {
+                    editProdiProfil.setText("")
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        editNamaProfil.addTextChangedListener {
+            if (!it.isNullOrEmpty()) {
+                editNamaProfil.setBackgroundResource(R.drawable.bg_form_input_filled)
+                editNamaProfil.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                iconName.setColorFilter(ContextCompat.getColor(this, R.color.blue))
+            } else {
+                editNamaProfil.setBackgroundResource(R.drawable.bg_form_input)
+                iconName.colorFilter = null
+            }
+        }
+
+        editNIMProfil.addTextChangedListener {
+            if (!it.isNullOrEmpty()) {
+                editNIMProfil.setBackgroundResource(R.drawable.bg_form_input_filled)
+                editNIMProfil.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                iconNIM.setColorFilter(ContextCompat.getColor(this, R.color.blue))
+            } else {
+                editNIMProfil.setBackgroundResource(R.drawable.bg_form_input)
+                iconNIM.colorFilter = null
+            }
+        }
+
+        editProdiProfil.addTextChangedListener {
+            if (!it.isNullOrEmpty()) {
+                editProdiProfil.setBackgroundResource(R.drawable.bg_form_input_filled)
+                editProdiProfil.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                iconProdi.setColorFilter(ContextCompat.getColor(this, R.color.blue))
+            } else {
+                editProdiProfil.setBackgroundResource(R.drawable.bg_form_input)
+                iconProdi.colorFilter = null
+            }
+        }
+
+        editEmailProfil.addTextChangedListener {
+            if (!it.isNullOrEmpty()) {
+                editEmailProfil.setBackgroundResource(R.drawable.bg_form_input_filled)
+                editEmailProfil.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                iconEmail.setColorFilter(ContextCompat.getColor(this, R.color.blue))
+            } else {
+                editEmailProfil.setBackgroundResource(R.drawable.bg_form_input)
+                iconEmail.colorFilter = null
+            }
+        }
+
+        editPhoneProfil.addTextChangedListener {
+            if (!it.isNullOrEmpty()) {
+                editPhoneProfil.setBackgroundResource(R.drawable.bg_form_input_filled)
+                editPhoneProfil.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                iconPhone.setColorFilter(ContextCompat.getColor(this, R.color.blue))
+            } else {
+                editPhoneProfil.setBackgroundResource(R.drawable.bg_form_input)
+                iconPhone.colorFilter = null
+            }
+        }
 
         // Disable Profile Photo Button
         btnEditPfp.isEnabled = false
@@ -105,7 +199,9 @@ class ProfileEditActivity : AppCompatActivity() {
 
     private var oldNama: String? = null
     private var oldNIM: String? = null
+    private var oldEmail: String? = null
     private var oldTelepon: String? = null
+
     // private var oldPhotoUrl: String? = null
 
     private fun loadUserProfile() {
@@ -118,6 +214,7 @@ class ProfileEditActivity : AppCompatActivity() {
                     if (document != null) {
                         oldNama = document.getString("nama")
                         oldNIM = document.getString("nim")
+                        oldEmail = document.getString("email")
                         oldTelepon = document.getString("telepon")
                         // oldPhotoUrl = document.getString("photoUrl")
 
@@ -184,15 +281,17 @@ class ProfileEditActivity : AppCompatActivity() {
         val userId = currentUser.uid
         val nama = editNamaProfil.text.toString().trim()
         val nim = editNIMProfil.text.toString().trim()
+        val email = currentUser.email ?: ""
         val telepon = editPhoneProfil.text.toString().trim()
 
-        saveUserData(userId, nama, nim, telepon, onComplete)
+        saveUserData(userId, nama, nim, email, telepon, onComplete)
     }
 
     private fun saveUserData(
         userId: String,
         newNama: String,
         newNIM: String,
+        newEmail: String,
         newTelepon: String,
         onComplete: () -> Unit
     ) {
@@ -200,6 +299,7 @@ class ProfileEditActivity : AppCompatActivity() {
 
         if (newNama != oldNama) updates["nama"] = newNama
         if (newNIM != oldNIM) updates["nim"] = newNIM
+        if (newEmail != oldEmail) updates["email"] = newEmail
         if (newTelepon != oldTelepon) updates["telepon"] = newTelepon
         // if (newPhotoUrl != null && newPhotoUrl != oldPhotoUrl) updates["photoUrl"] = newPhotoUrl
 
@@ -207,9 +307,10 @@ class ProfileEditActivity : AppCompatActivity() {
             firestore.collection("users").document(userId)
                 .set(updates, SetOptions.merge()) // set() + merge
                 .addOnSuccessListener {
-                    Toast.makeText(this, "Profil berhasil disimpan!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Profilmu berhasil disimpan!", Toast.LENGTH_SHORT).show()
                     oldNama = newNama
                     oldNIM = newNIM
+                    oldEmail = newEmail
                     oldTelepon = newTelepon
                     onComplete()
                 }
@@ -221,7 +322,7 @@ class ProfileEditActivity : AppCompatActivity() {
         if (updates.isNotEmpty()) {
             updateFirestore()
         } else {
-            Toast.makeText(this, "Tidak ada perubahan yang disimpan", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Profilmu tetap sama seperti sebelumnya.", Toast.LENGTH_SHORT).show()
             onComplete()
         }
     }

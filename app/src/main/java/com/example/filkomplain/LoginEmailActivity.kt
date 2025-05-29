@@ -9,20 +9,24 @@ import android.text.TextWatcher
 import android.widget.Toast
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.core.view.ViewCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.widget.addTextChangedListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-
 
 class LoginEmailActivity : AppCompatActivity() {
 
     private lateinit var editEmail: EditText
     private lateinit var editPassword: EditText
     private lateinit var btnMasuk: Button
+
+    private lateinit var iconEmail: ImageView
+    private lateinit var iconPassword: ImageView
 
     private lateinit var auth: FirebaseAuth
 
@@ -46,6 +50,9 @@ class LoginEmailActivity : AppCompatActivity() {
         editPassword = findViewById(R.id.editPassword)
         btnMasuk = findViewById(R.id.btnMasuk)
 
+        iconEmail = findViewById(R.id.iconEmail)
+        iconPassword = findViewById(R.id.iconPassword)
+
         btnMasuk.isEnabled = false
 
         val textWatcher = object : TextWatcher {
@@ -58,6 +65,28 @@ class LoginEmailActivity : AppCompatActivity() {
 
         editEmail.addTextChangedListener(textWatcher)
         editPassword.addTextChangedListener(textWatcher)
+
+        editEmail.addTextChangedListener {
+            if (!it.isNullOrEmpty()) {
+                editEmail.setBackgroundResource(R.drawable.bg_form_input_filled)
+                editEmail.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                iconEmail.setColorFilter(ContextCompat.getColor(this, R.color.blue))
+            } else {
+                editEmail.setBackgroundResource(R.drawable.bg_form_input)
+                iconEmail.colorFilter = null
+            }
+        }
+
+        editPassword.addTextChangedListener {
+            if (!it.isNullOrEmpty()) {
+                editPassword.setBackgroundResource(R.drawable.bg_form_input_filled)
+                editPassword.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                iconPassword.setColorFilter(ContextCompat.getColor(this, R.color.blue))
+            } else {
+                editPassword.setBackgroundResource(R.drawable.bg_form_input)
+                iconPassword.colorFilter = null
+            }
+        }
 
         btnMasuk.setOnClickListener {
             val email = editEmail.text.toString().trim()

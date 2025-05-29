@@ -5,6 +5,9 @@ import android.util.Log
 import android.widget.*
 import android.os.Bundle
 import android.content.Intent
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -36,7 +39,17 @@ class LoginActivity : AppCompatActivity() {
 
         btnLoginGoogle = findViewById(R.id.btnLoginGoogle)
         btnLoginEmail = findViewById(R.id.btnLoginEmail)
+
         textDaftar = findViewById(R.id.textDaftar)
+
+        val fullText = "Belum punya akun? Buat akun"
+        val spannable = SpannableString(fullText)
+
+        val startIndex = fullText.indexOf("Buat akun")
+        val endIndex = startIndex + "Buat akun".length
+
+        spannable.setSpan(UnderlineSpan(), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        textDaftar.text = spannable
 
         // Google Sign-In config
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

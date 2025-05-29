@@ -1,4 +1,4 @@
-package com.example.filkomplain.api
+package com.example.filkomplain
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody

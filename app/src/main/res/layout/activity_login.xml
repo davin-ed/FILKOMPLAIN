@@ -83,9 +83,10 @@
         android:id="@+id/iconGoogle"
         android:layout_width="20dp"
         android:layout_height="20dp"
+        android:layout_marginStart="34dp"
         app:layout_constraintBottom_toBottomOf="@id/btnLoginGoogle"
         app:layout_constraintEnd_toEndOf="@id/btnLoginGoogle"
-        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@id/btnLoginGoogle"
         app:layout_constraintTop_toTopOf="@id/btnLoginGoogle"
         app:srcCompat="@drawable/icon_google" />
@@ -114,9 +115,10 @@
         android:id="@+id/iconEmail"
         android:layout_width="20dp"
         android:layout_height="20dp"
+        android:layout_marginStart="34dp"
         app:layout_constraintBottom_toBottomOf="@id/btnLoginEmail"
         app:layout_constraintEnd_toEndOf="@id/btnLoginEmail"
-        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@id/btnLoginEmail"
         app:layout_constraintTop_toTopOf="@id/btnLoginEmail"
         app:srcCompat="@drawable/icon_email_reg" />

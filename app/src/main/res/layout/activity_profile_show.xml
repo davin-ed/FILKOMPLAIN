@@ -100,16 +100,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btnEditLogout" />
 
-            <ImageView
-                android:id="@+id/iconName"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                app:layout_constraintBottom_toBottomOf="@+id/showNamaProfil"
-                app:layout_constraintEnd_toEndOf="@+id/showNamaProfil"
-                app:layout_constraintHorizontal_bias="0.1"
-                app:layout_constraintStart_toStartOf="@+id/showNamaProfil"
-                app:layout_constraintTop_toTopOf="@id/showNamaProfil"
-                app:srcCompat="@drawable/icon_name" />
+        <ImageView
+            android:id="@+id/iconName"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="34dp"
+            app:layout_constraintBottom_toBottomOf="@+id/showNamaProfil"
+            app:layout_constraintEnd_toEndOf="@+id/showNamaProfil"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/showNamaProfil"
+            app:layout_constraintTop_toTopOf="@id/showNamaProfil"
+            app:srcCompat="@drawable/icon_name" />
 
             <EditText
                 android:id="@+id/showNIMProfil"
@@ -134,16 +135,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/showNamaProfil" />
 
-            <ImageView
-                android:id="@+id/iconNIM"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                app:layout_constraintBottom_toBottomOf="@+id/showNIMProfil"
-                app:layout_constraintEnd_toEndOf="@+id/showNIMProfil"
-                app:layout_constraintHorizontal_bias="0.1"
-                app:layout_constraintStart_toStartOf="@+id/showNIMProfil"
-                app:layout_constraintTop_toTopOf="@id/showNIMProfil"
-                app:srcCompat="@drawable/icon_nim" />
+        <ImageView
+            android:id="@+id/iconNIM"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="34dp"
+            app:layout_constraintBottom_toBottomOf="@+id/showNIMProfil"
+            app:layout_constraintEnd_toEndOf="@+id/showNIMProfil"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/showNIMProfil"
+            app:layout_constraintTop_toTopOf="@id/showNIMProfil"
+            app:srcCompat="@drawable/icon_nim" />
 
             <EditText
                 android:id="@+id/showProdiProfil"
@@ -168,16 +170,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/showNIMProfil" />
 
-            <ImageView
-                android:id="@+id/iconProdi"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                app:layout_constraintBottom_toBottomOf="@+id/showProdiProfil"
-                app:layout_constraintEnd_toEndOf="@+id/showProdiProfil"
-                app:layout_constraintHorizontal_bias="0.1"
-                app:layout_constraintStart_toStartOf="@+id/showProdiProfil"
-                app:layout_constraintTop_toTopOf="@id/showProdiProfil"
-                app:srcCompat="@drawable/icon_prodi" />
+        <ImageView
+            android:id="@+id/iconProdi"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="34dp"
+            app:layout_constraintBottom_toBottomOf="@+id/showProdiProfil"
+            app:layout_constraintEnd_toEndOf="@+id/showProdiProfil"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/showProdiProfil"
+            app:layout_constraintTop_toTopOf="@id/showProdiProfil"
+            app:srcCompat="@drawable/icon_prodi" />
 
             <EditText
                 android:id="@+id/showEmailProfil"
@@ -205,16 +208,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/showProdiProfil" />
 
-            <ImageView
-                android:id="@+id/iconEmail"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                app:layout_constraintBottom_toBottomOf="@+id/showEmailProfil"
-                app:layout_constraintEnd_toEndOf="@+id/showEmailProfil"
-                app:layout_constraintHorizontal_bias="0.1"
-                app:layout_constraintStart_toStartOf="@+id/showEmailProfil"
-                app:layout_constraintTop_toTopOf="@id/showEmailProfil"
-                app:srcCompat="@drawable/icon_email" />
+        <ImageView
+            android:id="@+id/iconEmail"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="34dp"
+            app:layout_constraintBottom_toBottomOf="@+id/showEmailProfil"
+            app:layout_constraintEnd_toEndOf="@+id/showEmailProfil"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/showEmailProfil"
+            app:layout_constraintTop_toTopOf="@id/showEmailProfil"
+            app:srcCompat="@drawable/icon_email" />
 
             <EditText
                 android:id="@+id/showPhoneProfil"
@@ -239,16 +243,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/showEmailProfil" />
 
-            <ImageView
-                android:id="@+id/iconPhone"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                app:layout_constraintBottom_toBottomOf="@+id/showPhoneProfil"
-                app:layout_constraintEnd_toEndOf="@+id/showPhoneProfil"
-                app:layout_constraintHorizontal_bias="0.1"
-                app:layout_constraintStart_toStartOf="@+id/showPhoneProfil"
-                app:layout_constraintTop_toTopOf="@id/showPhoneProfil"
-                app:srcCompat="@drawable/icon_phone" />
+        <ImageView
+            android:id="@+id/iconPhone"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="34dp"
+            app:layout_constraintBottom_toBottomOf="@+id/showPhoneProfil"
+            app:layout_constraintEnd_toEndOf="@+id/showPhoneProfil"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/showPhoneProfil"
+            app:layout_constraintTop_toTopOf="@id/showPhoneProfil"
+            app:srcCompat="@drawable/icon_phone" />
 
         <!-- Info profil sampai di sini -->
 

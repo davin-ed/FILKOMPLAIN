@@ -70,9 +70,10 @@
                 android:id="@+id/iconEmail"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:layout_marginStart="34dp"
                 app:layout_constraintBottom_toBottomOf="@+id/editEmail"
                 app:layout_constraintEnd_toEndOf="@+id/editEmail"
-                app:layout_constraintHorizontal_bias="0.1"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/editEmail"
                 app:layout_constraintTop_toTopOf="@id/editEmail"
                 app:srcCompat="@drawable/icon_email" />
@@ -101,9 +102,10 @@
                 android:id="@+id/iconPassword"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:layout_marginStart="34dp"
                 app:layout_constraintBottom_toBottomOf="@+id/editPassword"
                 app:layout_constraintEnd_toEndOf="@+id/editPassword"
-                app:layout_constraintHorizontal_bias="0.1"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/editPassword"
                 app:layout_constraintTop_toTopOf="@id/editPassword"
                 app:srcCompat="@drawable/icon_password" />
