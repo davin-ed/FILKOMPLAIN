@@ -1,4 +1,4 @@
-package com.example.filkomplain.adapter
+package com.example.filkomplain
 
 import android.content.ContentValues
 import android.content.Context
@@ -15,17 +15,12 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
-import com.example.filkomplain.R
-import com.example.filkomplain.model.KomplainModel
 import com.google.android.material.imageview.ShapeableImageView
 
 class KomplainAdapter(
     private val listKomplain: MutableList<KomplainModel>,
     private val onDeleteClick: (KomplainModel) -> Unit
 ) : RecyclerView.Adapter<KomplainAdapter.ViewHolder>() {
-
-    private var isAnyItemSelected = false
-    private val selectedPositions = mutableSetOf<Int>()
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val phItemKomplain: ShapeableImageView = itemView.findViewById(R.id.phItemKomplain)
@@ -57,37 +52,55 @@ class KomplainAdapter(
             .placeholder(R.drawable.ph_img_komplain)
             .into(holder.phItemKomplain)
 
-        holder.btnDloadDelKomplain.visibility = View.GONE
-        holder.bgTwoBtnKomplain.visibility = View.GONE
-
-        if (selectedPositions.contains(position)) {
-            showButtons(holder)
-        } else {
-            hideButtons(holder)
-        }
+        holder.overlaySelected.visibility = if (komplain.isSelected) View.VISIBLE else View.GONE
+        holder.bgTwoBtnKomplain.visibility = if (komplain.isSelected) View.VISIBLE else View.GONE
+        holder.btnDloadDelKomplain.visibility = if (komplain.isSelected) View.VISIBLE else View.GONE
 
         holder.itemView.setOnLongClickListener {
-            if (!isAnyItemSelected) {
-                isAnyItemSelected = true
-                selectedPositions.add(position)
-                notifyItemChanged(position)
-            }
+            komplain.isSelected = true
+
+            holder.overlaySelected.alpha = 0f
+            holder.overlaySelected.visibility = View.VISIBLE
+            holder.overlaySelected.animate().alpha(1f).setDuration(200).start()
+
+            holder.bgTwoBtnKomplain.alpha = 0f
+            holder.bgTwoBtnKomplain.visibility = View.VISIBLE
+            holder.bgTwoBtnKomplain.animate().alpha(1f).setDuration(200).start()
+
+            holder.btnDloadDelKomplain.alpha = 0f
+            holder.btnDloadDelKomplain.visibility = View.VISIBLE
+            holder.btnDloadDelKomplain.animate().alpha(1f).setDuration(200).start()
+
             true
         }
 
         holder.itemView.setOnClickListener {
-            if (isAnyItemSelected) {
-                if (selectedPositions.contains(position)) {
-                    selectedPositions.remove(position)
-                } else {
-                    selectedPositions.add(position)
-                }
+            if (komplain.isSelected) {
+                komplain.isSelected = false
 
-                notifyItemChanged(position)
+                holder.overlaySelected.animate()
+                    .alpha(0f)
+                    .setDuration(200)
+                    .withEndAction {
+                        holder.overlaySelected.visibility = View.GONE
+                        holder.overlaySelected.alpha = 1f
+                    }.start()
 
-                if (selectedPositions.isEmpty()) {
-                    isAnyItemSelected = false
-                }
+                holder.bgTwoBtnKomplain.animate()
+                    .alpha(0f)
+                    .setDuration(200)
+                    .withEndAction {
+                        holder.bgTwoBtnKomplain.visibility = View.GONE
+                        holder.bgTwoBtnKomplain.alpha = 1f
+                    }.start()
+
+                holder.btnDloadDelKomplain.animate()
+                    .alpha(0f)
+                    .setDuration(200)
+                    .withEndAction {
+                        holder.btnDloadDelKomplain.visibility = View.GONE
+                        holder.btnDloadDelKomplain.alpha = 1f
+                    }.start()
             }
         }
 
@@ -111,59 +124,6 @@ class KomplainAdapter(
             onDeleteClick(komplain)
         }
     }
-
-    private fun showButtons(holder: KomplainAdapter.ViewHolder) {
-        holder.overlaySelected.alpha = 0f
-        holder.overlaySelected.visibility = View.VISIBLE
-        holder.overlaySelected.animate().alpha(1f).setDuration(200).start()
-
-        holder.bgTwoBtnKomplain.alpha = 0f
-        holder.bgTwoBtnKomplain.visibility = View.VISIBLE
-        holder.bgTwoBtnKomplain.animate().alpha(1f).setDuration(200).start()
-
-        holder.btnDloadDelKomplain.alpha = 0f
-        holder.btnDloadDelKomplain.visibility = View.VISIBLE
-        holder.btnDloadDelKomplain.animate().alpha(1f).setDuration(200).start()
-    }
-
-    private fun hideButtons(holder: KomplainAdapter.ViewHolder) {
-        holder.btnDloadDelKomplain.animate().alpha(0f).setDuration(200)
-            .withEndAction {
-                holder.btnDloadDelKomplain.visibility = View.GONE
-                holder.bgTwoBtnKomplain.visibility = View.GONE
-                holder.btnDloadDelKomplain.alpha = 1f
-            }.start()
-
-        holder.bgTwoBtnKomplain.animate().alpha(0f).setDuration(200).start()
-
-        holder.overlaySelected.animate().alpha(0f).setDuration(200)
-            .withEndAction {
-                holder.overlaySelected.visibility = View.GONE
-                holder.overlaySelected.alpha = 1f
-            }.start()
-    }
-
-    fun removeItem(komplain: KomplainModel) {
-        val position = listKomplain.indexOf(komplain)
-        if (position == -1) return
-
-        listKomplain.removeAt(position)
-        notifyItemRemoved(position)
-
-        // Update selectedPositions
-        val updatedSet = mutableSetOf<Int>()
-        for (pos in selectedPositions) {
-            when {
-                pos < position -> updatedSet.add(pos)
-                pos > position -> updatedSet.add(pos - 1)
-            }
-        }
-        selectedPositions.clear()
-        selectedPositions.addAll(updatedSet)
-
-        isAnyItemSelected = selectedPositions.isNotEmpty()
-    }
-
 
     private fun saveImageToDownloads(context: Context, bitmap: Bitmap) {
         val filename = "komplain_${System.currentTimeMillis()}.jpg"

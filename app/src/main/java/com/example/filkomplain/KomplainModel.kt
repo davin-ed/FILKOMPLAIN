@@ -1,4 +1,4 @@
-package com.example.filkomplain.model
+package com.example.filkomplain
 
 data class KomplainModel(
     val judul: String = "",
@@ -9,5 +9,6 @@ data class KomplainModel(
     val imageUrl: String = "",
     val timestamp: Long = 0L,
     val uid: String = "",
-    var id: String = ""
+    var id: String = "",
+    var isSelected: Boolean = false
 )

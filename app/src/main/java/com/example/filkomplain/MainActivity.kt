@@ -15,8 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.filkomplain.adapter.KomplainAdapter
-import com.example.filkomplain.model.KomplainModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -137,18 +135,7 @@ class MainActivity : AppCompatActivity() {
                     listKomplain.add(komplain)
                 }
                 komplainAdapter.notifyDataSetChanged()
-
-                if (listKomplain.isEmpty()) {
-                    rvKomplain.visibility = View.GONE
-                    bgMainEmpty.visibility = View.VISIBLE
-                    textKosong1.visibility = View.VISIBLE
-                    textKosong2.visibility = View.VISIBLE
-                } else {
-                    rvKomplain.visibility = View.VISIBLE
-                    bgMainEmpty.visibility = View.GONE
-                    textKosong1.visibility = View.GONE
-                    textKosong2.visibility = View.GONE
-                }
+                toggleEmptyState()
             }
             .addOnFailureListener { exception ->
                 Log.e("MainActivity", "Gagal mengambil data komplain", exception)
@@ -156,20 +143,33 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
+    private fun toggleEmptyState() {
+        if (listKomplain.isEmpty()) {
+            rvKomplain.visibility = View.GONE
+            bgMainEmpty.visibility = View.VISIBLE
+            textKosong1.visibility = View.VISIBLE
+            textKosong2.visibility = View.VISIBLE
+        } else {
+            rvKomplain.visibility = View.VISIBLE
+            bgMainEmpty.visibility = View.GONE
+            textKosong1.visibility = View.GONE
+            textKosong2.visibility = View.GONE
+        }
+    }
+
     private fun deleteKomplain(komplain: KomplainModel) {
         db.collection("komplain").document(komplain.id)
             .delete()
             .addOnSuccessListener {
-                komplainAdapter.removeItem(komplain)
-
-                Toast.makeText(this, "Laporanmu berhasil dihapus!", Toast.LENGTH_SHORT).show()
-
-                if (komplainAdapter.itemCount == 0) {
-                    rvKomplain.visibility = View.GONE
-                    bgMainEmpty.visibility = View.VISIBLE
-                    textKosong1.visibility = View.VISIBLE
-                    textKosong2.visibility = View.VISIBLE
+                val position = listKomplain.indexOf(komplain)
+                if (position != -1) {
+                    listKomplain.removeAt(position)
+                    komplainAdapter.notifyItemRemoved(position)
+                    komplainAdapter.notifyItemRangeChanged(position, komplainAdapter.itemCount - position)
                 }
+
+                toggleEmptyState()
+                Toast.makeText(this, "Laporanmu berhasil dihapus!", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Gagal menghapus laporan", Toast.LENGTH_SHORT).show()
