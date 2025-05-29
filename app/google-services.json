@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "299347384011",
+    "firebase_url": "https://filkomplain-default-rtdb.firebaseio.com",
     "project_id": "filkomplain",
     "storage_bucket": "filkomplain.firebasestorage.app"
   },
@@ -19,6 +20,14 @@
           "android_info": {
             "package_name": "com.example.filkomplain",
             "certificate_hash": "7c159daa88ae9dd4ff402dec7fc0db9cb35b1dd9"
+          }
+        },
+        {
+          "client_id": "299347384011-jmn9b20bq8oatju29atmm1m90ch3qhpc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.filkomplain",
+            "certificate_hash": "ab01817ab42622c82ce963b55bd62ad19450bf26"
           }
         },
         {
