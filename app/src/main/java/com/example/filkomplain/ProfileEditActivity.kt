@@ -201,7 +201,6 @@ class ProfileEditActivity : AppCompatActivity() {
     private var oldNIM: String? = null
     private var oldEmail: String? = null
     private var oldTelepon: String? = null
-
     // private var oldPhotoUrl: String? = null
 
     private fun loadUserProfile() {
