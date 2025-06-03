@@ -89,7 +89,7 @@ class RegisterActivity : AppCompatActivity() {
         editPassword.addTextChangedListener(textWatcher)
 
         editNama.addTextChangedListener {
-            if (!it.isNullOrEmpty()) {
+            if (!it.isNullOrBlank()) {
                 editNama.setBackgroundResource(R.drawable.bg_form_input_filled)
                 editNama.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 iconName.setColorFilter(ContextCompat.getColor(this, R.color.blue))
@@ -100,7 +100,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         editNIM.addTextChangedListener {
-            if (!it.isNullOrEmpty()) {
+            if (!it.isNullOrBlank()) {
                 editNIM.setBackgroundResource(R.drawable.bg_form_input_filled)
                 editNIM.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 iconNIM.setColorFilter(ContextCompat.getColor(this, R.color.blue))
@@ -111,7 +111,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         editEmail.addTextChangedListener {
-            if (!it.isNullOrEmpty()) {
+            if (!it.isNullOrBlank()) {
                 editEmail.setBackgroundResource(R.drawable.bg_form_input_filled)
                 editEmail.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 iconEmail.setColorFilter(ContextCompat.getColor(this, R.color.blue))
@@ -122,7 +122,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         editPhone.addTextChangedListener {
-            if (!it.isNullOrEmpty()) {
+            if (!it.isNullOrBlank()) {
                 editPhone.setBackgroundResource(R.drawable.bg_form_input_filled)
                 editPhone.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 iconPhone.setColorFilter(ContextCompat.getColor(this, R.color.blue))
@@ -133,7 +133,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         editPassword.addTextChangedListener {
-            if (!it.isNullOrEmpty()) {
+            if (!it.isNullOrBlank()) {
                 editPassword.setBackgroundResource(R.drawable.bg_form_input_filled)
                 editPassword.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 iconPassword.setColorFilter(ContextCompat.getColor(this, R.color.blue))

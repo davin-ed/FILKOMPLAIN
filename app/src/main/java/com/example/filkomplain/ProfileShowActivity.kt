@@ -5,16 +5,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ProfileShowActivity : AppCompatActivity() {
-
-    private lateinit var auth: FirebaseAuth
-    private lateinit var db: FirebaseFirestore
 
     private lateinit var namaEditText: EditText
     private lateinit var nimEditText: EditText
@@ -22,8 +21,12 @@ class ProfileShowActivity : AppCompatActivity() {
     private lateinit var emailEditText: EditText
     private lateinit var phoneEditText: EditText
 
-    private lateinit var btnEditProfil: Button
+    private lateinit var phFotoProfil: ImageView
     private lateinit var btnLogout: Button
+    private lateinit var btnEditProfil: Button
+
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +44,8 @@ class ProfileShowActivity : AppCompatActivity() {
         emailEditText = findViewById(R.id.showEmailProfil)
         phoneEditText = findViewById(R.id.showPhoneProfil)
         btnEditProfil = findViewById(R.id.btnEditProfil)
+        phFotoProfil = findViewById(R.id.phFotoProfil)
+
         btnLogout = findViewById(R.id.btnLogout)
 
         loadUserProfile()
@@ -72,8 +77,17 @@ class ProfileShowActivity : AppCompatActivity() {
                         val nama = document.getString("nama")
                         val nim = document.getString("nim")
                         val prodi = document.getString("prodi")
+                        val imageUrl = document.getString("imageUrl")
 
-                        if (prodi.isNullOrEmpty() && !nim.isNullOrEmpty()) {
+                        if (!imageUrl.isNullOrEmpty()) {
+                            Glide.with(this@ProfileShowActivity)
+                                .load(imageUrl)
+                                .circleCrop()
+                                .placeholder(R.drawable.profile_photo)
+                                .into(phFotoProfil)
+                        }
+
+                        if (prodi.isNullOrBlank() && !nim.isNullOrBlank()) {
                             val kodeProdi = nim.substring(6, 8)
 
                             val namaProdi = when (kodeProdi) {

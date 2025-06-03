@@ -1,13 +1,15 @@
 package com.example.filkomplain
 
 import android.annotation.SuppressLint
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.*
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -16,10 +18,19 @@ import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.File
 
 class ProfileEditActivity : AppCompatActivity() {
 
-    private lateinit var editFotoProfil: ImageView
+    private lateinit var phFotoProfil: ImageView
     private lateinit var btnEditPfp: Button
 
     private lateinit var editNamaProfil: EditText
@@ -36,13 +47,13 @@ class ProfileEditActivity : AppCompatActivity() {
 
     private lateinit var btnSelesaiEditProfil: Button
 
-    private val PICK_IMAGE_REQUEST = 100
+    private lateinit var imagePickerLauncher: ActivityResultLauncher<String>
+
+    private var uploadedImageUrl: String? = null
     private var selectedImageUri: Uri? = null
 
     private val auth = FirebaseAuth.getInstance()
     private val firestore = FirebaseFirestore.getInstance()
-
-    // private var uploadedImageUrl: String? = null
 
     private var isFromGoogleLogin = false
 
@@ -53,8 +64,9 @@ class ProfileEditActivity : AppCompatActivity() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.white)
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
 
-        editFotoProfil = findViewById(R.id.editFotoProfil)
+        phFotoProfil = findViewById(R.id.phFotoProfil)
         btnEditPfp = findViewById(R.id.btnEditPfp)
+        btnSelesaiEditProfil = findViewById(R.id.btnSelesaiEditProfil)
 
         editNamaProfil = findViewById(R.id.editNamaProfil)
         editNIMProfil = findViewById(R.id.editNIMProfil)
@@ -68,12 +80,20 @@ class ProfileEditActivity : AppCompatActivity() {
         iconEmail = findViewById(R.id.iconEmail)
         iconPhone = findViewById(R.id.iconPhone)
 
-        btnSelesaiEditProfil = findViewById(R.id.btnSelesaiEditProfil)
-
-        // Cek login dari Google
         isFromGoogleLogin = intent.getBooleanExtra("fromGoogleLogin", false)
 
         loadUserProfile()
+
+        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                selectedImageUri = it
+                uploadImageToServer(it)
+            }
+        }
+
+        btnEditPfp.setOnClickListener {
+            imagePickerLauncher.launch("image/*")
+        }
 
         btnSelesaiEditProfil.isEnabled = false
 
@@ -116,7 +136,7 @@ class ProfileEditActivity : AppCompatActivity() {
         })
 
         editNamaProfil.addTextChangedListener {
-            if (!it.isNullOrEmpty()) {
+            if (!it.isNullOrBlank()) {
                 editNamaProfil.setBackgroundResource(R.drawable.bg_form_input_filled)
                 editNamaProfil.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 iconName.setColorFilter(ContextCompat.getColor(this, R.color.blue))
@@ -127,7 +147,7 @@ class ProfileEditActivity : AppCompatActivity() {
         }
 
         editNIMProfil.addTextChangedListener {
-            if (!it.isNullOrEmpty()) {
+            if (!it.isNullOrBlank()) {
                 editNIMProfil.setBackgroundResource(R.drawable.bg_form_input_filled)
                 editNIMProfil.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 iconNIM.setColorFilter(ContextCompat.getColor(this, R.color.blue))
@@ -138,7 +158,7 @@ class ProfileEditActivity : AppCompatActivity() {
         }
 
         editProdiProfil.addTextChangedListener {
-            if (!it.isNullOrEmpty()) {
+            if (!it.isNullOrBlank()) {
                 editProdiProfil.setBackgroundResource(R.drawable.bg_form_input_filled)
                 editProdiProfil.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 iconProdi.setColorFilter(ContextCompat.getColor(this, R.color.blue))
@@ -149,7 +169,7 @@ class ProfileEditActivity : AppCompatActivity() {
         }
 
         editEmailProfil.addTextChangedListener {
-            if (!it.isNullOrEmpty()) {
+            if (!it.isNullOrBlank()) {
                 editEmailProfil.setBackgroundResource(R.drawable.bg_form_input_filled)
                 editEmailProfil.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 iconEmail.setColorFilter(ContextCompat.getColor(this, R.color.blue))
@@ -160,7 +180,7 @@ class ProfileEditActivity : AppCompatActivity() {
         }
 
         editPhoneProfil.addTextChangedListener {
-            if (!it.isNullOrEmpty()) {
+            if (!it.isNullOrBlank()) {
                 editPhoneProfil.setBackgroundResource(R.drawable.bg_form_input_filled)
                 editPhoneProfil.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 iconPhone.setColorFilter(ContextCompat.getColor(this, R.color.blue))
@@ -169,9 +189,6 @@ class ProfileEditActivity : AppCompatActivity() {
                 iconPhone.colorFilter = null
             }
         }
-
-        // Disable Profile Photo Button
-        btnEditPfp.isEnabled = false
 
         btnSelesaiEditProfil.setOnClickListener {
             updateProfile {
@@ -201,7 +218,7 @@ class ProfileEditActivity : AppCompatActivity() {
     private var oldNIM: String? = null
     private var oldEmail: String? = null
     private var oldTelepon: String? = null
-    // private var oldPhotoUrl: String? = null
+    private var oldImageUrl: String? = null
 
     private fun loadUserProfile() {
         val currentUser = auth.currentUser
@@ -215,7 +232,17 @@ class ProfileEditActivity : AppCompatActivity() {
                         oldNIM = document.getString("nim")
                         oldEmail = document.getString("email")
                         oldTelepon = document.getString("telepon")
-                        // oldPhotoUrl = document.getString("photoUrl")
+                        oldImageUrl = document.getString("imageUrl")
+
+                        val imageUrl = document.getString("imageUrl")
+
+                        if (!imageUrl.isNullOrEmpty()) {
+                            Glide.with(this@ProfileEditActivity)
+                                .load(imageUrl)
+                                .circleCrop()
+                                .placeholder(R.drawable.profile_photo)
+                                .into(phFotoProfil)
+                        }
 
                         editNamaProfil.setText(oldNama)
                         editPhoneProfil.setText(oldTelepon)
@@ -226,7 +253,7 @@ class ProfileEditActivity : AppCompatActivity() {
                         editNIMProfil.setText(nim)
                         editEmailProfil.setText(currentUser.email)
 
-                        if (prodi.isNullOrEmpty() && !nim.isNullOrEmpty()) {
+                        if (prodi.isNullOrBlank() && !nim.isNullOrBlank()) {
                             val kodeProdi = nim.substring(6, 8)
 
                             val namaProdi = when (kodeProdi) {
@@ -239,34 +266,11 @@ class ProfileEditActivity : AppCompatActivity() {
                             }
                             editProdiProfil.setText(namaProdi)
                         }
-
-                        val photoUrl = document.getString("photoUrl")
-                        if (!photoUrl.isNullOrEmpty()) {
-                            Glide.with(this)
-                                .load(photoUrl)
-                                .placeholder(R.drawable.profile_photo)
-                                .into(editFotoProfil)
-                        }
                     }
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Gagal mengambil data profil", Toast.LENGTH_SHORT).show()
                 }
-        }
-    }
-
-    private fun openImageChooser() {
-        val intent = Intent()
-        intent.type = "image/*"
-        intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(Intent.createChooser(intent, "Pilih Foto Profil"), PICK_IMAGE_REQUEST)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
-            selectedImageUri = data.data
-            editFotoProfil.setImageURI(selectedImageUri)
         }
     }
 
@@ -282,8 +286,9 @@ class ProfileEditActivity : AppCompatActivity() {
         val nim = editNIMProfil.text.toString().trim()
         val email = currentUser.email ?: ""
         val telepon = editPhoneProfil.text.toString().trim()
+        val imageUrl = uploadedImageUrl ?: oldImageUrl.orEmpty()
 
-        saveUserData(userId, nama, nim, email, telepon, onComplete)
+        saveUserData(userId, nama, nim, email, telepon, imageUrl, onComplete)
     }
 
     private fun saveUserData(
@@ -292,6 +297,7 @@ class ProfileEditActivity : AppCompatActivity() {
         newNIM: String,
         newEmail: String,
         newTelepon: String,
+        newImageUrl: String,
         onComplete: () -> Unit
     ) {
         val updates = mutableMapOf<String, Any>()
@@ -300,21 +306,22 @@ class ProfileEditActivity : AppCompatActivity() {
         if (newNIM != oldNIM) updates["nim"] = newNIM
         if (newEmail != oldEmail) updates["email"] = newEmail
         if (newTelepon != oldTelepon) updates["telepon"] = newTelepon
-        // if (newPhotoUrl != null && newPhotoUrl != oldPhotoUrl) updates["photoUrl"] = newPhotoUrl
+       if (newImageUrl != null && newImageUrl != oldImageUrl) updates["imageUrl"] = newImageUrl
 
         val updateFirestore = {
             firestore.collection("users").document(userId)
                 .set(updates, SetOptions.merge()) // set() + merge
                 .addOnSuccessListener {
-                    Toast.makeText(this, "Profilmu berhasil disimpan!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Profilmu berhasil diperbarui!", Toast.LENGTH_SHORT).show()
                     oldNama = newNama
                     oldNIM = newNIM
                     oldEmail = newEmail
                     oldTelepon = newTelepon
+                    oldImageUrl = newImageUrl
                     onComplete()
                 }
                 .addOnFailureListener {
-                    Toast.makeText(this, "Gagal menyimpan profil", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Gagal memperbarui profil", Toast.LENGTH_SHORT).show()
                 }
         }
 
@@ -324,6 +331,60 @@ class ProfileEditActivity : AppCompatActivity() {
             Toast.makeText(this, "Profilmu tetap sama seperti sebelumnya.", Toast.LENGTH_SHORT).show()
             onComplete()
         }
+    }
+
+    private fun uploadImageToServer(uri: Uri) {
+        val file = uriToFile(uri, this)
+        if (file == null) {
+            Toast.makeText(this, "Gagal mendapatkan file dari gambar", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+        val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
+        val description = "Foto Komplain".toRequestBody("text/plain".toMediaTypeOrNull())
+
+        val apiService = RetrofitClient.instance.create(ApiService::class.java)
+        apiService.uploadImage(body, description).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    val raw = response.body()?.string()
+                    Toast.makeText(this@ProfileEditActivity, "Upload berhasil", Toast.LENGTH_SHORT).show()
+
+                    val prefix = "File berhasil di-upload: "
+                    if (raw != null && raw.startsWith(prefix)) {
+                        val fileName = raw.substringAfter(prefix).trim()
+                        val serverUrl = RetrofitClient.getUploadsUrl()
+                        uploadedImageUrl = "$serverUrl$fileName"
+
+                        Glide.with(this@ProfileEditActivity)
+                            .load(uploadedImageUrl)
+                            .circleCrop()
+                            .placeholder(R.drawable.profile_photo)
+                            .into(phFotoProfil)
+                    } else {
+                        Toast.makeText(this@ProfileEditActivity, "Format respon tidak dikenali", Toast.LENGTH_SHORT).show()
+                    }
+
+                } else {
+                    val error = response.errorBody()?.string()
+                    Toast.makeText(this@ProfileEditActivity, "Upload gagal: $error", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Toast.makeText(this@ProfileEditActivity, "Gagal upload: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun uriToFile(uri: Uri, context: Context): File? {
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+        val tempFile = File.createTempFile("temp_image", ".jpg", context.cacheDir)
+        tempFile.outputStream().use { fileOut ->
+            inputStream.copyTo(fileOut)
+        }
+        return tempFile
     }
 
     @SuppressLint("MissingSuperCall")

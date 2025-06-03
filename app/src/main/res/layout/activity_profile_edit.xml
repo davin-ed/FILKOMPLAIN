@@ -29,8 +29,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/editFotoProfil"
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/phFotoProfil"
             android:layout_width="wrap_content"
             android:layout_height="120dp"
             android:layout_marginTop="32dp"
@@ -51,7 +51,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/editFotoProfil"
+            app:layout_constraintTop_toTopOf="@+id/phFotoProfil"
             app:layout_constraintVertical_bias="0.0" />
 
         <!-- Form mulai dari sini -->
@@ -74,7 +74,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editFotoProfil" />
+                app:layout_constraintTop_toBottomOf="@+id/phFotoProfil" />
 
             <ImageView
                 android:id="@+id/iconName"

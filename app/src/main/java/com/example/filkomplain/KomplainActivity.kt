@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -68,6 +67,7 @@ class KomplainActivity : AppCompatActivity() {
         btnBuatKomplain = findViewById(R.id.btnBuatKomplain)
         textUpFoto = findViewById(R.id.textUpFoto)
         textDescUpFoto = findViewById(R.id.textDescUpFoto)
+
         editJudul = findViewById(R.id.editJudul)
         editDescKomplain = findViewById(R.id.editDescKomplain)
         editLokasi = findViewById(R.id.editLokasi)
@@ -78,14 +78,14 @@ class KomplainActivity : AppCompatActivity() {
         iconLokasi = findViewById(R.id.iconLokasi)
         iconKontak = findViewById(R.id.iconKontak)
 
+        tampilanSebelumUpload()
+
         imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 selectedImageUri = it
                 uploadImageToServer(it)
             }
         }
-
-        tampilanSebelumUpload()
 
         btnUpFotoKomplain.setOnClickListener {
             imagePickerLauncher.launch("image/*")
@@ -107,7 +107,7 @@ class KomplainActivity : AppCompatActivity() {
         editKontak.addTextChangedListener(textWatcher)
 
         editJudul.addTextChangedListener {
-            if (!it.isNullOrEmpty()) {
+            if (!it.isNullOrBlank()) {
                 editJudul.setBackgroundResource(R.drawable.bg_form_input_filled)
                 editJudul.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 iconJudul.setColorFilter(ContextCompat.getColor(this, R.color.blue))
@@ -118,7 +118,7 @@ class KomplainActivity : AppCompatActivity() {
         }
 
         editDescKomplain.addTextChangedListener {
-            if (!it.isNullOrEmpty()) {
+            if (!it.isNullOrBlank()) {
                 editDescKomplain.setBackgroundResource(R.drawable.bg_form_input_filled)
                 editDescKomplain.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 iconDescKomplain.setColorFilter(ContextCompat.getColor(this, R.color.blue))
@@ -129,7 +129,7 @@ class KomplainActivity : AppCompatActivity() {
         }
 
         editLokasi.addTextChangedListener {
-            if (!it.isNullOrEmpty()) {
+            if (!it.isNullOrBlank()) {
                 editLokasi.setBackgroundResource(R.drawable.bg_form_input_filled)
                 editLokasi.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 iconLokasi.setColorFilter(ContextCompat.getColor(this, R.color.blue))
@@ -140,7 +140,7 @@ class KomplainActivity : AppCompatActivity() {
         }
 
         editKontak.addTextChangedListener {
-            if (!it.isNullOrEmpty()) {
+            if (!it.isNullOrBlank()) {
                 editKontak.setBackgroundResource(R.drawable.bg_form_input_filled)
                 editKontak.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 iconKontak.setColorFilter(ContextCompat.getColor(this, R.color.blue))
@@ -173,7 +173,7 @@ class KomplainActivity : AppCompatActivity() {
             return
         }
 
-        val currentDate = SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date())
+        val currentDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
         val timestampNow = System.currentTimeMillis()
 
         val userId = FirebaseAuth.getInstance().currentUser?.uid
@@ -240,7 +240,6 @@ class KomplainActivity : AppCompatActivity() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
                     val raw = response.body()?.string()
-                    Log.d("UploadDebug", "Raw response: $raw")
                     Toast.makeText(this@KomplainActivity, "Upload berhasil", Toast.LENGTH_SHORT).show()
 
                     val prefix = "File berhasil di-upload: "
@@ -248,26 +247,22 @@ class KomplainActivity : AppCompatActivity() {
                         val fileName = raw.substringAfter(prefix).trim()
                         val serverUrl = RetrofitClient.getUploadsUrl()
                         uploadedImageUrl = "$serverUrl$fileName"
-                        Log.d("UploadDebug", "uploadedImageUrl = $uploadedImageUrl")
 
                         runOnUiThread {
                             tampilanSetelahUploadBerhasil()
                             btnBuatKomplain.isEnabled = areAllFieldsFilled() && uploadedImageUrl != null
                         }
                     } else {
-                        Log.e("UploadDebug", "Respons tidak sesuai format")
                         Toast.makeText(this@KomplainActivity, "Format respon tidak dikenali", Toast.LENGTH_SHORT).show()
                     }
 
                 } else {
                     val error = response.errorBody()?.string()
-                    Log.e("UploadDebug", "Error response: $error")
                     Toast.makeText(this@KomplainActivity, "Upload gagal: $error", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.e("UploadDebug", "Failure: ${t.message}")
                 Toast.makeText(this@KomplainActivity, "Gagal upload: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })

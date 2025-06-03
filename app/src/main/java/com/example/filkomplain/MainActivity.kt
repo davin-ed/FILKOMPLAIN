@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -68,10 +69,19 @@ class MainActivity : AppCompatActivity() {
                     textTanya.text = "Mau ngabarin apa\nhari ini, $namaDepan? 😉"
 
                     val nim = document.getString("nim")
+                    val imageUrl = document.getString("imageUrl")
+
+                    if (!imageUrl.isNullOrEmpty()) {
+                        Glide.with(this@MainActivity)
+                            .load(imageUrl)
+                            .circleCrop()
+                            .placeholder(R.drawable.bg_btn_profile_photo_small_ripple)
+                            .into(btnShowProfile)
+                    }
 
                     val textProdi = findViewById<TextView>(R.id.textProdi)
 
-                    if (!nim.isNullOrEmpty()) {
+                    if (!nim.isNullOrBlank()) {
                         val kodeProdi = nim.substring(6, 8)
                         val namaProdi = when (kodeProdi) {
                             "20" -> "Teknik Informatika"
@@ -128,7 +138,6 @@ class MainActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { result ->
                 listKomplain.clear()
-                Log.d("MainActivity", "Jumlah komplain ditemukan: ${result.size()}")
                 for (document in result) {
                     val komplain = document.toObject(KomplainModel::class.java)
                     komplain.id = document.id

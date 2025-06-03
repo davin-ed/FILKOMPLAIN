@@ -1,7 +1,9 @@
 package com.example.filkomplain
 
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Environment
@@ -10,6 +12,7 @@ import com.bumptech.glide.request.transition.Transition
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -27,10 +30,11 @@ class KomplainAdapter(
         val titleItemKomplain: TextView = itemView.findViewById(R.id.titleItemKomplain)
         val textLokasiKomplain: TextView = itemView.findViewById(R.id.textLokasiKomplain)
         val textTanggalKomplain: TextView = itemView.findViewById(R.id.textTanggalKomplain)
-        val bgTwoBtnKomplain: View = itemView.findViewById(R.id.bgTwoBtnKomplain)
+        val bgTwoBtnKomplain: View = itemView.findViewById(R.id.bgFunctionBtnKomplain)
         val btnDloadDelKomplain: View = itemView.findViewById(R.id.btnDloadDelKomplain)
-        val btnDloadKomplain: View = itemView.findViewById(R.id.btnDloadKomplain)
-        val btnDelKomplain: View = itemView.findViewById(R.id.btnDelKomplain)
+        val btnDloadKomplain: Button = itemView.findViewById(R.id.btnDloadKomplain)
+        val btnDelKomplain: Button = itemView.findViewById(R.id.btnDelKomplain)
+        val btnEditKomplain: Button = itemView.findViewById(R.id.btnEditKomplain)
         val overlaySelected: View = itemView.findViewById(R.id.overlaySelected)
     }
 
@@ -57,6 +61,11 @@ class KomplainAdapter(
         holder.btnDloadDelKomplain.visibility = if (komplain.isSelected) View.VISIBLE else View.GONE
 
         holder.itemView.setOnLongClickListener {
+
+            if (komplain.isSelected) {
+                return@setOnLongClickListener true
+            }
+
             komplain.isSelected = true
 
             holder.overlaySelected.alpha = 0f
@@ -118,6 +127,21 @@ class KomplainAdapter(
                         Toast.makeText(context, "Gagal mengambil gambar", Toast.LENGTH_SHORT).show()
                     }
                 })
+        }
+
+        holder.btnEditKomplain.setOnClickListener {
+            val intent = Intent(holder.itemView.context, KomplainEditActivity::class.java)
+            intent.putExtra("komplainId", komplain.id)
+            intent.putExtra("judul", komplain.judul)
+            intent.putExtra("deskripsi", komplain.deskripsi)
+            intent.putExtra("lokasi", komplain.lokasi)
+            intent.putExtra("kontak", komplain.kontak)
+            intent.putExtra("imageUrl", komplain.imageUrl)
+
+            holder.itemView.context.startActivity(intent)
+            if (holder.itemView.context is Activity) {
+                (holder.itemView.context as Activity).overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top)
+            }
         }
 
         holder.btnDelKomplain.setOnClickListener {
