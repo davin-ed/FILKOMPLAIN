@@ -6,8 +6,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "https://3689-114-5-105-94.ngrok-free.app/" // Ganti sesuai IP generated ngrok
-    // private const val BASE_URL = "http://10.0.2.2/" // Kalau pakai local
+    // private const val BASE_URL = "https://3689-114-5-105-94.ngrok-free.app/" // Ganti sesuai IP generated ngrok
+    private const val BASE_URL = "http://10.0.2.2/" // Kalau pakai local
     private const val UPLOADS_PATH = "FILKOMPLAIN/"
 
     fun getUploadsUrl(): String {
