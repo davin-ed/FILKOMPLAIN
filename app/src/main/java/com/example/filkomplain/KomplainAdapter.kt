@@ -25,6 +25,8 @@ class KomplainAdapter(
     private val onDeleteClick: (KomplainModel) -> Unit
 ) : RecyclerView.Adapter<KomplainAdapter.ViewHolder>() {
 
+    var isSelectionMode = false
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val phItemKomplain: ShapeableImageView = itemView.findViewById(R.id.phItemKomplain)
         val titleItemKomplain: TextView = itemView.findViewById(R.id.titleItemKomplain)
@@ -61,29 +63,6 @@ class KomplainAdapter(
         holder.btnDloadDelKomplain.visibility = if (komplain.isSelected) View.VISIBLE else View.GONE
 
         holder.itemView.setOnLongClickListener {
-
-            if (komplain.isSelected) {
-                return@setOnLongClickListener true
-            }
-
-            komplain.isSelected = true
-
-            holder.overlaySelected.alpha = 0f
-            holder.overlaySelected.visibility = View.VISIBLE
-            holder.overlaySelected.animate().alpha(1f).setDuration(200).start()
-
-            holder.bgTwoBtnKomplain.alpha = 0f
-            holder.bgTwoBtnKomplain.visibility = View.VISIBLE
-            holder.bgTwoBtnKomplain.animate().alpha(1f).setDuration(200).start()
-
-            holder.btnDloadDelKomplain.alpha = 0f
-            holder.btnDloadDelKomplain.visibility = View.VISIBLE
-            holder.btnDloadDelKomplain.animate().alpha(1f).setDuration(200).start()
-
-            true
-        }
-
-        holder.itemView.setOnClickListener {
             if (komplain.isSelected) {
                 komplain.isSelected = false
 
@@ -110,6 +89,75 @@ class KomplainAdapter(
                         holder.btnDloadDelKomplain.visibility = View.GONE
                         holder.btnDloadDelKomplain.alpha = 1f
                     }.start()
+
+                if (!listKomplain.any { it.isSelected }) {
+                    isSelectionMode = false
+                }
+
+                return@setOnLongClickListener true
+            }
+
+            komplain.isSelected = true
+            isSelectionMode = true
+
+            holder.overlaySelected.alpha = 0f
+            holder.overlaySelected.visibility = View.VISIBLE
+            holder.overlaySelected.animate().alpha(1f).setDuration(200).start()
+
+            holder.bgTwoBtnKomplain.alpha = 0f
+            holder.bgTwoBtnKomplain.visibility = View.VISIBLE
+            holder.bgTwoBtnKomplain.animate().alpha(1f).setDuration(200).start()
+
+            holder.btnDloadDelKomplain.alpha = 0f
+            holder.btnDloadDelKomplain.visibility = View.VISIBLE
+            holder.btnDloadDelKomplain.animate().alpha(1f).setDuration(200).start()
+
+            true
+        }
+
+        holder.itemView.setOnClickListener {
+            if (isSelectionMode) {
+                komplain.isSelected = !komplain.isSelected
+                if (komplain.isSelected) {
+                    holder.overlaySelected.alpha = 0f
+                    holder.overlaySelected.visibility = View.VISIBLE
+                    holder.overlaySelected.animate().alpha(1f).setDuration(200).start()
+
+                    holder.bgTwoBtnKomplain.alpha = 0f
+                    holder.bgTwoBtnKomplain.visibility = View.VISIBLE
+                    holder.bgTwoBtnKomplain.animate().alpha(1f).setDuration(200).start()
+
+                    holder.btnDloadDelKomplain.alpha = 0f
+                    holder.btnDloadDelKomplain.visibility = View.VISIBLE
+                    holder.btnDloadDelKomplain.animate().alpha(1f).setDuration(200).start()
+                } else {
+                    holder.overlaySelected.animate()
+                        .alpha(0f)
+                        .setDuration(200)
+                        .withEndAction {
+                            holder.overlaySelected.visibility = View.GONE
+                            holder.overlaySelected.alpha = 1f
+                        }.start()
+
+                    holder.bgTwoBtnKomplain.animate()
+                        .alpha(0f)
+                        .setDuration(200)
+                        .withEndAction {
+                            holder.bgTwoBtnKomplain.visibility = View.GONE
+                            holder.bgTwoBtnKomplain.alpha = 1f
+                        }.start()
+
+                    holder.btnDloadDelKomplain.animate()
+                        .alpha(0f)
+                        .setDuration(200)
+                        .withEndAction {
+                            holder.btnDloadDelKomplain.visibility = View.GONE
+                            holder.btnDloadDelKomplain.alpha = 1f
+                        }.start()
+                }
+                if (!listKomplain.any { it.isSelected }) {
+                    isSelectionMode = false
+                }
             }
         }
 
